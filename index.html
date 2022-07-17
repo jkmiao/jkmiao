@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>便捷计算器</title>
+	<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+	<style type="text/css">
+		.container {
+			margin: 3em;
+		}
+		.col3{
+			margin: 1.2em;
+		}
+	</style>
+</head>
+<body>
+<div class="container">
+	<h2 class="page-header text-center">便捷计算器</h2>
+
+	<div class="form-horizontal">
+		<div class="col3">
+			选择功能：
+			<select id='method' onchange="calc()">
+				<option value='fun1'>计算时长</option>
+				<option value='fun2' selected>固定间隔记时</option>
+				<option value='fun3'>不固定间隔记时</option>
+			</select>
+		</div>
+		<div class="col3">
+			开始时间：<input type="time" id='stime' value='08:00'>
+		</div>
+		<div class="col3" id='endtime'>
+			结束时间：<input type='time' id='etime' value='23:59'>
+		</div>
+		<div class="col3" id='steptime1'>
+			间隔时间1：<span id='stepv1'>30</span>
+			<input type='range' id='jiange1' min=10 max=60 step=5 value='30' onchange='showstep()'>		
+			<span style="margin-left: 1em;">
+			次数1：<input type="number" id='cishu1' value='20' min=2 max=30>
+			</span>
+		</div>
+
+		<div class="col3" id='steptime2'>
+			间隔时间2：<span id='stepv2'>30</span>
+			<input type='range' id='jiange2' min=10 max=60 step=5 value='30' onchange='showstep()'>		
+			<span style="margin-left: 1em;">
+			次数2：<input type="number" id='cishu2' value='20' min=2 max=30>
+			</span>
+		</div>
+
+		<div class="col3">
+			<button onclick="calc()">开始计算</button>
+		</div>
+		<hr>
+		<p id='res'></p>
+	</div>
+</div>
+
+	<script type="text/javascript">
+
+		function calc(){
+			var method = $('#method').val();
+			var res = '结果'
+			switch(method){
+				case 'fun1':
+					$('#steptime1').hide();
+					$('#steptime2').hide();
+					$('#endtime').show();
+					res = fun1();
+					break;
+				case 'fun2':
+					$('#endtime').hide();
+					$('#steptime1').show();
+					$('#steptime2').hide();
+
+					res = fun2();
+					break;
+				case 'fun3':
+					$('#endtime').hide();
+					$('#steptime1').show();
+					$('#steptime2').show();
+
+					res = fun3();
+			}
+			$('#res').html(res);
+		}
+
+		function showstep(){
+			$('#stepv1').html($('#jiange1').val());
+			$('#stepv2').html($('#jiange2').val());
+		}
+
+		function fun1(){
+			var res = '1';
+			var stime = $('#stime').val().split(':');
+			var etime = $('#etime').val().split(':');
+
+			var shour = parseInt(stime[0]);
+			var smin = parseInt(stime[1]);
+
+			var ehour = parseInt(etime[0]);
+			var emin = parseInt(etime[1]);
+
+			var rmin = emin - smin;
+			var rhour = ehour - shour;
+
+			if(rmin<0){
+				rmin += 60;
+				rhour -= 1;
+			}
+			if(rhour<0){
+				rhour += 24;
+			}
+
+			res = rhour + ':' + rmin;
+			return res;
+		}
+
+		function fun2(){
+			var res = new Array();
+			var stime = $('#stime').val().split(':');
+
+			const step = parseInt($('#jiange1').val());
+			const cishu = $('#cishu1').val();
+			console.log('step', step);
+
+			var shour = parseInt(stime[0]);
+			var smin = parseInt(stime[1]);
+
+			for(var i=1; i<=cishu; i++){
+				smin = parseInt(smin);
+				smin += step;
+				if(smin>=60){
+					smin -= 60;
+					shour +=1;
+				}
+				if(shour >= 24){
+					shour -= 24;
+				}
+				if(smin<10){
+					smin = '0'+smin;
+				}
+				res.push(shour + ':'+ smin);
+
+				if(i%5==0){
+					res.push('<br>');
+				}
+			}
+
+			return res.join('<br>');
+		}
+
+		function fun3(){
+			var res = new Array();
+			var stime = $('#stime').val().split(':');
+
+			const step = parseInt($('#jiange1').val());
+			const cishu = $('#cishu1').val();
+
+			const step2 = parseInt($('#jiange2').val());
+			const cishu2 = parseInt($('#cishu2').val());
+
+			console.log('step', step);
+
+			var shour = parseInt(stime[0]);
+			var smin = parseInt(stime[1]);
+
+			for(var i=1; i<=cishu; i++){
+				smin = parseInt(smin);
+				smin += step;
+				if(smin>=60){
+					smin -= 60;
+					shour +=1;
+				}
+				if(shour >= 24){
+					shour -= 24;
+				}
+				if(smin<10){
+					smin = '0'+smin;
+				}
+				res.push(shour + ':'+ smin);
+
+				if(i%5==0){
+					res.push('<br>');
+				}
+			}
+
+			for(var i=1; i<=cishu2; i++){
+				smin = parseInt(smin);
+				smin += step2;
+				if(smin>=60){
+					smin -= 60;
+					shour +=1;
+				}
+				if(shour >= 24){
+					shour -= 24;
+				}
+				if(smin<10){
+					smin = '0'+smin;
+				}
+				res.push(shour + ':'+ smin);
+
+				if(i%5==0){
+					res.push('<br>');
+				}
+			}
+
+			return res.join('<br>');
+		}
+
+
+		
+	</script>
+
+</body>
+</html>
